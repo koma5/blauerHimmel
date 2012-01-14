@@ -7,7 +7,7 @@ SoftwareSerial GPS = SoftwareSerial(2,3);
 
 //Var declaration
 const int chipSelect = 4;
-char dataString;
+char dataChar;
 
 void setup()
 {
@@ -36,12 +36,12 @@ void loop()
   
   if (GPS.available() && logFile){
     
-    dataString = GPS.read();
+    dataChar = GPS.read();
     
-    logFile.println(dataString);
+    logFile.println(dataChar);
     logFile.close();
     // print to the serial port too:
 
-    Serial.write(dataString);
+    Serial.write(dataChar);
   }
 }
