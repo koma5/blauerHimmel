@@ -80,5 +80,4 @@ void loop()
     
   }
   
-  getGPSData
 }
