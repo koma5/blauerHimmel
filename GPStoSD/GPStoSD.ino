@@ -5,12 +5,12 @@
 //SoftwareSerial(RX,TX)
 SoftwareSerial GPS = SoftwareSerial(2,3);
 
-//Var declaration
+//var declaration
 const int chipSelect = 4;
 
 int countNMEA = 0;
 char NMEA[100] = "";
-String bastelString;
+String parsedNMEA;
 
 void setup()
 {
@@ -52,7 +52,7 @@ void getGPSData()
     if (GPS.available()){
    
         NMEA[countNMEA] = GPS.read();
-        /* // #dev
+        /* // #dev print out every char
         Serial.print("[");
         Serial.print(countNMEA, DEC);
         Serial.print("]:");
@@ -60,21 +60,15 @@ void getGPSData()
         
         if (NMEA[countNMEA] == '$')
         {
-           //Dollarsign data received
+           //if a dollarsign is received -> end of NMEA sentence
            //Serial.println("data receivd");  
-           NMEA[countNMEA] = '\0';
+           NMEA[countNMEA] = '\0'; //replace dollarsign with end of string
           
+           //for(int x = 0; NMEA[x] != '\0';x++)Serial.print(NMEA[x]);
           
-           for(int x = 0; NMEA[x] != '\0';x++)Serial.print(NMEA[x]);
-          
-           /*bastelString = NMEA;
-          if((bastelString.indexOf("$GPRMC")) == 0)
-          {
-            if 
-              Serial.print(bastelString);
-          }*/
+          parseNMEA(NMEA);
     
-          for(int y = 0; y<100;y++)NMEA[y] = ' '; //empty NMEA
+          for(int y = 0; y<100;y++)NMEA[y] = ' '; //empty NMEA[]
           
           NMEA[0] = '$';
           countNMEA = 0;
@@ -83,4 +77,31 @@ void getGPSData()
     countNMEA++; 
   
     }
+}
+
+void parseNMEA(const char input[])
+{
+  
+  parsedNMEA = input;
+  //for(int x = 0; input[x] != '\0';x++)Serial.print(input[x]);
+  //Serial.print(parsedNMEA);
+  
+  
+  if(parsedNMEA.indexOf("$GPRMC") >= 0)
+  {
+    //if 
+      Serial.print("found $GPRMC at:");
+      Serial.print(parsedNMEA.indexOf("$GPRMC"));
+      Serial.print(parsedNMEA);
   }
+
+  
+  if(parsedNMEA.indexOf("$GPGGA") >= 0)
+  {
+    //if 
+      Serial.print("found $GPGGA at:");
+      Serial.print(parsedNMEA.indexOf("$GPGGA"));
+      Serial.print(parsedNMEA);
+  }
+
+}
