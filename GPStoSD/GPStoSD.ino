@@ -7,6 +7,7 @@ SoftwareSerial GPS = SoftwareSerial(2,3);
 
 //var declaration
 const int chipSelect = 4;
+const int StatusLED = 12;
 
 int countNMEA = 0;
 char NMEA[100] = "";
@@ -18,6 +19,8 @@ void setup()
   GPS.begin(4800); //baudrate: 4800 (fixed)
   //serial data configuration for computer
   Serial.begin(9600); //baudrate: 9600
+  
+  pinMode(StatusLED, OUTPUT);
 
 /*
   if (!SD.begin(chipSelect)) {
@@ -35,8 +38,9 @@ void loop()
 {
   
   //File logFile = SD.open("gps.txt", FILE_WRITE);
-  
+  digitalWrite(StatusLED, HIGH);
   getGPSData();
+  digitalWrite(StatusLED, LOW);
     /*
     logFile.println(dataChar);
     logFile.close();
@@ -81,7 +85,6 @@ void getGPSData()
 
 void parseNMEA(const char input[])
 {
-  
   parsedNMEA = input;
   //for(int x = 0; input[x] != '\0';x++)Serial.print(input[x]);
   //Serial.print(parsedNMEA);
@@ -102,6 +105,6 @@ void parseNMEA(const char input[])
       Serial.print("found $GPGGA at:");
       Serial.print(parsedNMEA.indexOf("$GPGGA"));
       Serial.print(parsedNMEA);
+      
   }
-
 }
