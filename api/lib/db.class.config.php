@@ -1,8 +1,8 @@
 ﻿<?php	
 	// db
-	$this->db_server = 'blauerHimmel...';
-	$this->db_user = '';
+	$this->db_server = 'localhost';
+	$this->db_user = 'root';
 	$this->db_password = '';
-	$this->db_name = '';
+	$this->db_name = 'blauerHimmel';
 
 ?>
