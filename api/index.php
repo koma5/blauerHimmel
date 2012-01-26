@@ -1,17 +1,23 @@
-
-
 <?php
 
-$input = $_Request['q'];
-$apiKey = $_Request['k'];
+include 'lib/db.class.php';
 
 
 
-long;lat;speed
+$data = $_REQUEST['data'];
+//echo "raw: ".$data."<br>";
+$obj = json_decode($data);
+//echo $obj->name;
+
+foreach ($obj->point as $point)
+{
+	echo "lat: " . $point->lat . " long: " . $point->long . "<br>";
+
+}
 
 
 
-
+//long;lat;speed
 
 
 ?>
