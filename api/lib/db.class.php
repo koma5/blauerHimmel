@@ -1,4 +1,6 @@
-﻿<?php class Database {
+﻿<?php
+class Database
+{
 
 
 	public function __construct() {
@@ -32,9 +34,5 @@
 	$this->quit();
 
 	}
-
-
-
-
 }
 ?>
