@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 
 include 'lib/db.class.php';
 
@@ -24,10 +24,10 @@ if ($recCount == 1)
 {
 	foreach ($dataObj->point as $point)
 	{
-		/*echo "lat: " . $point->lat
+		echo "lat: " . $point->lat
 		. " long: " . $point->long
 		. " speed: " . $point->speed
-		. "<br>";*/
+		. "<br>";
 	}
 }
 else {
