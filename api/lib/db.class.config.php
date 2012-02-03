@@ -4,5 +4,4 @@
 	$this->db_user = 'root';
 	$this->db_password = '';
 	$this->db_name = 'blauerHimmel';
-
 ?>
