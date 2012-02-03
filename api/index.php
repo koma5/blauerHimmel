@@ -13,7 +13,7 @@ $myDB->connect();
 		$jsonInput = fgets($handle);
 		$data = json_decode($jsonInput,true);
 
-$dataObj = json_decode('﻿{"name": "drerscht","apikey": "4cdqfTqhL4SswTTeA4sOL4SswTTeA4sO","point": [{"lat": "4707.4282","long": "00853.7112","speed": "0","time": "212225","date": "250112"}]}');
+$dataObj = json_decode($data);
 //#dev 
 echo $data;
 //#dev 
