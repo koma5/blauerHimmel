@@ -8,16 +8,16 @@ $myDB->connect();
 
 
 //get data and decode
-//$data = $_REQUEST['data'];
-		$handle = fopen('php://input','r');
+$data = $_REQUEST['data'];
+		/*$handle = fopen('php://input','r');
 		$jsonInput = fgets($handle);
-		$data = json_decode($jsonInput,true);
+		$data = json_decode($jsonInput,true);*/
 
-$dataObj = json_decode($data);
-//#dev 
-echo $data;
-//#dev 
-var_dump($dataObj);
+
+$dataObj = json_decode(prepareJSON($data));
+json_last_error();
+//#dev echo $data;
+//#dev var_dump($dataObj);
 //#dev echo "data recieved from: " . $dataObj->name . "[" . $dataObj->apikey . "]<br>";
 
 
@@ -62,6 +62,20 @@ switch ($error) {
 
 
 */
+
+
+function prepareJSON($input) {
+    
+    //This will convert ASCII/ISO-8859-1 to UTF-8.
+    //Be careful with the third parameter (encoding detect list), because
+    //if set wrong, some input encodings will get garbled (including UTF-8!)
+    $input = mb_convert_encoding($input, 'UTF-8', 'ASCII,UTF-8,ISO-8859-1');
+    
+    //Remove UTF-8 BOM if present, json_decode() does not like it.
+    if(substr($input, 0, 3) == pack("CCC", 0xEF, 0xBB, 0xBF)) $input = substr($input, 3);
+    
+    return $input;
+}
 
 
 
