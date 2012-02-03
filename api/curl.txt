@@ -1,0 +1,1 @@
+curl -v -H "Accept: application/json" -H "Content-type: application/json" -X POST -d '{"name": "drerscht","apikey": "4cdqfTqhL4SswTTeA4sOL4SswTTeA4sO"}' http://127.0.0.1/blauerHimmel/api/index.php
