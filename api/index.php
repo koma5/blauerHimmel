@@ -33,7 +33,6 @@ if ($error != 0)
 	recApiKey = '".$dataObj->apikey."'
 	");
 	if ($result) $recID = mysql_result($result, 0);
-	echo $recID;
 	if ($recID >0 ) $auth = 1;
 	else
 	{
@@ -46,22 +45,30 @@ if ($error != 0)
 
 	if($auth != 0)
 	{
+	
+     	$inputQuery = "INSERT INTO `blauerHimmel`.`tPoint` (`poiLatidude`, `poiLongitude`, `poiSpeed`, `poiTimestampUTC`, `fk_pk_tReceiver_ID` VALUES";
+	
 		foreach ($dataObj->point as $point)
 		{
 			$dtime =  preg_replace('/(.{2})(.{2})(.{2})(.{2})(.{2})(.{2})/', '20$3-$2-$1 $4:$5:$6',$point->date.$point->time);
 
-			$inputQuery = "
-			INSERT INTO `blauerHimmel`.`tPoint` (`poiLatidude`, `poiLongitude`, `poiSpeed`, `poiTimestampUTC`, `fk_pk_tReceiver_ID`)
-			VALUES (
+			$inputQuery .= "
+			(
 			'".$point->lat."',
 			'".$point->long."',
 			'".$point->speed."',
 			'".$dtime."',
 			'".$recID."'
-			);";
-			mysql_query($inputQuery);
-			echo $inputQuery;
+			),";
+			
+			
+			
+			//mysql_query($inputQuery);
+			
 		}
+		
+     	$inputQuery .= substr($inputQuery, 0, strlen($inputQuery)-1 ).";";
+     	echo "query:".$inputQuery;
 
 
 	}
