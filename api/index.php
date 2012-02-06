@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 header('Content-type: application/json');
 
 //db setup
@@ -22,8 +22,7 @@ if ($error != 0)
 	$data = json_decode($jsonInput,true);*/
 	//#dev json_last_error();
 	//#dev echo $data;
-	//#dev 
-	var_dump($dataObj);
+	//#dev var_dump($dataObj);
 	//#dev echo "data recieved from: " . $dataObj->name . "[" . $dataObj->apikey . "]<br>";
 
 
@@ -45,7 +44,15 @@ if ($error != 0)
 	{
 		foreach ($dataObj->point as $point)
 		{
-			$inputQuery = "INSERT INTO blahhhhh";
+			$inputQuery = "
+			INSERT INTO `blauerHimmel`.`tPoint` (`poiLatidude`, `poiLongitude`, `poiSpeed`, `poiTimestampUTC`, `fk_pk_tReceiver_ID`)
+			VALUES (
+			'".$point->lat."',
+			'".$point->long."',
+			'".$point->speed."',
+			'".$point->date.$point->time."',
+			'".1."'
+			);";
 			echo $inputQuery;
 		}
 
@@ -57,16 +64,16 @@ if ($error != 0)
 
 switch ($error) {
     case 1:
-        echo '{"error":["code":"1","name":"data saved ... everything OK"]}';
+        echo '{"error":{"code":"1","name":"data saved ... everything OK"}}';
         break;
     case 0:
-        echo '{"error":["code":"0","name":"no data received"]}';
+        echo '{"error":{"code":"0","name":"no data received"}}';
         break;
     case 2:
-        echo '{"error":["code":"2","name":"authentication failed! go away!"]}';
+        echo '{"error":{"code":"2","name":"authentication failed! go away!"}}';
         break;
     case 3:
-        echo '{"error":["code":"3","name":""]}';
+        echo '{"error":{"code":"3","name":""}}';
         break;
 }
 
@@ -92,6 +99,8 @@ function prepareJSON($input) {
     
     //Remove UTF-8 BOM if present, json_decode() does not like it.
     if(substr($input, 0, 3) == pack("CCC", 0xEF, 0xBB, 0xBF)) $input = substr($input, 3);
+    
+    $input = str_replace("\\", "", $input); // remove escaped -> "
     
     return $input;
 }
