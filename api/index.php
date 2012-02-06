@@ -28,31 +28,38 @@ if ($error != 0)
 
 	// auth ######## do it with selecting the ID you will need it at the insert ;)
 	$result = mysql_query("
-	SELECT COUNT(*) FROM `tReceiver`
+	SELECT pk_tReceiver_ID FROM `tReceiver`
 	WHERE recName = '".$dataObj->name."' AND
 	recApiKey = '".$dataObj->apikey."'
 	");
-	if ($result) $recCount = mysql_result($result, 0);
-	if ($recCount == 1) $auth = 1;
+	if ($result) $recID = mysql_result($result, 0);
+	echo $recID;
+	if ($recID >0 ) $auth = 1;
 	else
 	{
 		$auth = 0;
 		$error = 2;
 	}
+	
+				
+
 
 	if($auth != 0)
 	{
 		foreach ($dataObj->point as $point)
 		{
+			$dtime =  preg_replace('/(.{2})(.{2})(.{2})(.{2})(.{2})(.{2})/', '20$3-$2-$1 $4:$5:$6',$point->date.$point->time);
+
 			$inputQuery = "
 			INSERT INTO `blauerHimmel`.`tPoint` (`poiLatidude`, `poiLongitude`, `poiSpeed`, `poiTimestampUTC`, `fk_pk_tReceiver_ID`)
 			VALUES (
 			'".$point->lat."',
 			'".$point->long."',
 			'".$point->speed."',
-			'".$point->date.$point->time."',
-			'".1."'
+			'".$dtime."',
+			'".$recID."'
 			);";
+			mysql_query($inputQuery);
 			echo $inputQuery;
 		}
 
