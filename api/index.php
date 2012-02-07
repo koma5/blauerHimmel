@@ -26,7 +26,6 @@ if ($error != 0)
 	//#dev echo "data recieved from: " . $dataObj->name . "[" . $dataObj->apikey . "]<br>";
 
 
-	// auth ######## do it with selecting the ID you will need it at the insert ;)
 	$result = mysql_query("
 	SELECT pk_tReceiver_ID FROM `tReceiver`
 	WHERE recName = '".$dataObj->name."' AND
@@ -46,14 +45,13 @@ if ($error != 0)
 	if($auth != 0)
 	{
 	
-     	$inputQuery = "INSERT INTO `blauerHimmel`.`tPoint` (`poiLatidude`, `poiLongitude`, `poiSpeed`, `poiTimestampUTC`, `fk_pk_tReceiver_ID` VALUES";
-	
+     		$inputQuery = "INSERT INTO `blauerHimmel`.`tPoint` (`poiLatidude`, `poiLongitude`, `poiSpeed`, `poiTimestampUTC`, `fk_pk_tReceiver_ID` VALUES";
+
 		foreach ($dataObj->point as $point)
 		{
 			$dtime =  preg_replace('/(.{2})(.{2})(.{2})(.{2})(.{2})(.{2})/', '20$3-$2-$1 $4:$5:$6',$point->date.$point->time);
 
-			$inputQuery .= "
-			(
+			$inputQuery .= " (
 			'".$point->lat."',
 			'".$point->long."',
 			'".$point->speed."',
@@ -67,8 +65,8 @@ if ($error != 0)
 			
 		}
 		
-     	$inputQuery .= substr($inputQuery, 0, strlen($inputQuery)-1 ).";";
-     	echo "query:".$inputQuery;
+     		$inputQuery = substr($inputQuery, 0, strlen($inputQuery)-1 ).";";
+     		//#dev echo "query:".$inputQuery;
 
 
 	}
