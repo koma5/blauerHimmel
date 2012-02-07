@@ -8,6 +8,7 @@ $myDB->connect();
 
 //initialize error code
 $error = 1; //everything OK
+$recID = NULL;
 
 //get data and decode
 if (isset($_REQUEST['data']))$data = $_REQUEST['data'];
@@ -31,8 +32,9 @@ if ($error != 0)
 	WHERE recName = '".$dataObj->name."' AND
 	recApiKey = '".$dataObj->apikey."'
 	");
-	if ($result) $recID = mysql_result($result, 0);
-	if ($recID >0 ) $auth = 1;
+	if ($result && mysql_num_rows($result) == 1)
+	$recID = mysql_result($result, 0);
+	if ($recID >0) $auth = 1;
 	else
 	{
 		$auth = 0;
