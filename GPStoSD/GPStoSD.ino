@@ -1,7 +1,7 @@
 //-------------------------------------------------------------------------------------------------------------------------------
-// File     :  GpsToSd.c
-// Name     :  Stefan Steiner & Marco Koch
-// Date     :  06.02.2012
+// File     :  GPStoSD.c
+// Name     :  Stefan Steiner (@stektograph) & Marco Koch (@koma5)
+// Date     :  07.02.2012
 // Platform :  Arduino
 // Function :  Get Data from the GPS modul pmb-248 and save them to a SD-Card
 //-------------------------------------------------------------------------------------------------------------------------------
@@ -41,7 +41,7 @@ char NMEA[8][100] //can save 8 NMEA sentence
 	float laengengrad;
 	float geschwindigkeit;
 	int datum;
-    int hoehe;
+	int hoehe;
 
 //-------------------------------------------------------------------------------------------------------------------------------
 
