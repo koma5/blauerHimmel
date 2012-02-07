@@ -33,7 +33,7 @@ boolean usData = false;   //are usefull Datas available
 //Global Variables
 //-------------------------------------------------------------------------------------------------------------------------------
 int NMEAlevel = 0; //showes active level of array, active means the one who will be filled now... works as FILO
-char NMEA[8][100] //can save 8 NMEA sentence 
+char NMEA[8][100]; //can save 8 NMEA sentence 
 
     //specific data from GPS receiver
 	int time; //reicht int abklären
