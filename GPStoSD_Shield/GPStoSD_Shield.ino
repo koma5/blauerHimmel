@@ -35,9 +35,6 @@ boolean usData = false;   //are usefull Datas available
 int NMEAlevel = 0; //showes active level of array, active means the one who will be filled now... works as FILO
 char NMEA[8][100]; //can save 8 NMEA sentence 
 
-int NMEAcharcount = 0; //count 
-
-
                            //in string -> we send string for calculating
 	String time;              //long  //
 	String latitude;          //float //
@@ -61,7 +58,7 @@ void setup()
 
   for(int y = 0; y<8;y++)                       //empty NMEA[][]
      for(int x = 0; x<100;x++)                  //
-		 NMEA[y][x] = 'x';                      //
+		 NMEA[y][x] = ' ';                      //
 
 
 }
@@ -75,20 +72,18 @@ void loop()
   if ((GPS.available()) && (GPSrd == true)) //GPS data are available and are allowed to receive
   {
 		  getGPSData();
-                // for(int x = 0; x<8;x++)Serial.print(NMEA[x]);  
-
+                  
   }
 
-
-                 
   if(NMEAstr == true) //NMEA String received -> Parse
   {
-	  parseNMEA();
+	  parseNMEA(); 
 	  NMEAstr == false;   //wait for next NMEA string
   }
   
-/*  if(usData == true) //usefull Data ready to save to SD
+  if(usData == true) //usefull Data ready to save to SD
   {
+	 
           Serial.print(time);
 	  Serial.print(latitude);
 	  Serial.print(longitude);
@@ -97,7 +92,7 @@ void loop()
 	  Serial.print(altitude); 
           //save Data
 	  usData = false; //wait for next Data
-  }*/
+  }
 }
 //-------------------------------------------------------------------------------------------------------------------------------
 
@@ -109,32 +104,30 @@ void loop()
 //-------------------------------------------------------------------------------------------------------------------------------
 void getGPSData()
 {   
+	int countNMEA = 0;
+
 	while(GPS.available()) //get all sended data not just one char
 	{
-        NMEA[NMEAlevel][NMEAcharcount] = GPS.read(); //Get one char
-        //Serial.print(NMEA[NMEAlevel][NMEAcharcount]);
+        NMEA[NMEAlevel][countNMEA] = GPS.read(); //Get one char
         
-        if (NMEA[NMEAlevel][NMEAcharcount] == '$') //if a dollarsign is received -> end of NMEA sentence
+        if (NMEA[NMEAlevel][countNMEA] == '$') //if a dollarsign is received -> end of NMEA sentence
         {
-           NMEA[NMEAlevel][NMEAcharcount] = '\0';  //replace dollarsign with end of string
+           NMEA[NMEAlevel][countNMEA] = '\0';  //replace dollarsign with end of string
             
            NMEAstr = true; //NMEAstr received set flag
  
-           Serial.print(NMEAlevel);
-           Serial.print(NMEA[NMEAlevel]);
-		   if(NMEAlevel <7) //no Overflow
+		   if(NMEAlevel >8) //no Overflow
 			   NMEAlevel++; //change to next NMEA level. next string can be saved
-
   
-          for(int x = 0; x<100;x++)NMEA[NMEAlevel][x] = ' '; //prepare for filling new NMEA sentence
+          for(int x = 0; x<100;x++)NMEA[NMEAlevel][x] = ' '; //empty new NMEA level
           
           NMEA[NMEAlevel][0] = '$'; //new String beginns with $
-          NMEAcharcount = 0;            
+          countNMEA = 0;            
         }
 
-        NMEAcharcount++;                 
+        countNMEA++;                 
 	}
-	//NMEA[NMEAlevel][NMEAcharcount+1] = '\0'; //to avoid endless String
+	NMEA[NMEAlevel][countNMEA+1] = '\0'; //to avoid endless String
 
 }
 //-------------------------------------------------------------------------------------------------------------------------------
@@ -147,10 +140,7 @@ void getGPSData()
 //-------------------------------------------------------------------------------------------------------------------------------
 void parseNMEA()
 {
-   Serial.print("Begin parse");
-   Serial.print(NMEAlevel);
-              Serial.print(NMEA[NMEAlevel]);
-
+   
    while(NMEAlevel >=0)//get last saved string and check every string in the NMEA array
    {
 	   String NMEAstring = NMEA[NMEAlevel];//copy string
@@ -160,27 +150,22 @@ void parseNMEA()
 	   {
 		   if(getdatastr(NMEAstring, 2).equals("A"))//valid data
 		   {
-			/*  time = getdatastr(NMEAstring, 1);              
+			  time = getdatastr(NMEAstring, 1);              
 			  latitude = getdatastr(NMEAstring, 3);          
 			  longitude = getdatastr(NMEAstring, 4);     
 			  Speed = getdatastr(NMEAstring, 5);            
 			  date = getdatastr(NMEAstring, 7);      
-*/
-                          usData = true;  //usefull data 
-                  }
+		   }
 		  
+		  usData = true;  //usefull data found
 	   }
 
        if(NMEAstring.indexOf("$GPGGA") != -1)
 	   {
-          //altitude = getdatastr(NMEAstring, 7);      
+          altitude = getdatastr(NMEAstring, 7);      
 		  usData = true; //usefull data found
 	   }
    }
-   NMEAlevel = 0;
-   NMEAstr = false;
-      Serial.print("end parse");
-
 }
 
 
