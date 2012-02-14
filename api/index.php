@@ -47,28 +47,26 @@ if ($error != 0)
 	if($auth != 0)
 	{
 	
-     		$inputQuery = "INSERT INTO `blauerHimmel`.`tPoint` (`poiLatidude`, `poiLongitude`, `poiSpeed`, `poiTimestampUTC`, `fk_pk_tReceiver_ID` VALUES";
+     		$inputQuery = "INSERT INTO `tPoint` (`poiLatidude`, `poiLongitude`, `poiSpeed`, `poiTimestampUTC`, `fk_pk_tReceiver_ID`) VALUES";
 
 		foreach ($dataObj->point as $point)
 		{
-			$dtime =  preg_replace('/(.{2})(.{2})(.{2})(.{2})(.{2})(.{2})/', '20$3-$2-$1 $4:$5:$6',$point->date.$point->time);
 
 			$inputQuery .= " (
 			'".$point->lat."',
 			'".$point->long."',
 			'".$point->speed."',
-			'".$dtime."',
+			'".$point->date."',
 			'".$recID."'
 			),";
 			
-			
-			
-			//mysql_query($inputQuery);
 			
 		}
 		
      		$inputQuery = substr($inputQuery, 0, strlen($inputQuery)-1 ).";";
      		//#dev echo "query:".$inputQuery;
+     		mysql_query($inputQuery);
+     		myLog("post", count($dataObj->point), $recID);
 
 
 	}
@@ -117,6 +115,17 @@ function prepareJSON($input) {
     $input = str_replace("\\", "", $input); // remove escaped -> "
     
     return $input;
+}
+
+function myLog($action, $count, $recID)
+{
+	$ip = $_SERVER['REMOTE_ADDR'];
+
+	$query = "
+	INSERT INTO `tlog` (`logAction`, `logPointCount`, `logIp`, `fk_pk_tReceiver_ID`)
+	VALUES ('".$action."', ".$count.", '".$ip."', ".$recID.");";
+	mysql_query($query);
+
 }
 
 
