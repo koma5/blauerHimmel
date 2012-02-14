@@ -12,28 +12,23 @@
 <form action="index.php" method="post">
 	<textarea class="xxlarge" id="data" name="data" rows="20">
 ﻿{
-	"name":"drerscht",
-	"apikey":"4cdqfTqhL4SswTTeA4sOL4SswTTeA4sO",
-	"point":
-		[
-			{
-				"lat":"4707.4282",
-				"long":"00853.7112",
-				"speed":"0",
-				"time":"212225",
-				"date":"250112"
-				
-			},
-			
-			{
-				"lat":"4807.4283",
-				"long":"00953.7112",
-				"speed":"0",
-				"time":"212226",
-				"date":"250112"
-			}
-
-		]
+  "name":"drerscht",
+  "apikey":"4cdqfTqhL4SswTTeA4sOL4SswTTeA4sO",
+  "point":
+  [
+    {
+      "lat":4807.4283,
+      "long":953.7112,
+      "speed":0,
+      "date":"2012-01-25 21:22:25"
+    },
+    {
+      "lat":4807.4283,
+      "long":953.7112,
+      "speed":0,
+      "date":"2012-01-25 21:22:26"
+    }
+  ]
 }	
 
 
