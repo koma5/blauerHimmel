@@ -66,7 +66,7 @@ if ($error != 0)
      		$inputQuery = substr($inputQuery, 0, strlen($inputQuery)-1 ).";";
      		//#dev echo "query:".$inputQuery;
      		mysql_query($inputQuery);
-     		myLog("post", count($dataObj->point), $recID);
+     		
 
 
 	}
@@ -76,12 +76,15 @@ if ($error != 0)
 
 switch ($error) {
     case 1:
+    	myLog("post", count($dataObj->point), $recID);
         echo '{"error":{"code":"1","name":"data saved ... everything OK"}}';
         break;
     case 0:
+    	myLog("no data", 0, 0);
         echo '{"error":{"code":"0","name":"no data received"}}';
         break;
     case 2:
+    	myLog("auth failed", 0, 0);
         echo '{"error":{"code":"2","name":"authentication failed! go away!"}}';
         break;
     case 3:
