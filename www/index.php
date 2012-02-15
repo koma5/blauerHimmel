@@ -1,3 +1,14 @@
+<?php 
+include 'lib/db.class.php';
+$myDB = new Database();
+$myDB->connect();
+
+$result = mysql_query("
+SELECT poiLatidude, poiLongitude, poiTimestampUTC FROM `tPoint` WHERE fk_pk_tReceiver_ID = 2
+");//echo mysql_errno($link) . ": " . mysql_error($link) . "\n";
+
+?>
+
 <!DOCTYPE html>
 <html>
   <head>
@@ -20,7 +31,7 @@
      function initialize() {
         var myOptions = {
           center: new google.maps.LatLng(42.3717,10.92602),
-          zoom: 13,
+          zoom: 12,
           mapTypeId: google.maps.MapTypeId.ROADMAP
         };
 
@@ -28,9 +39,17 @@
 
 	var myLatLng =
 	[
-		new google.maps.LatLng(42.3717,10.92602),
-		new google.maps.LatLng(42.3226,11.0139)
-	];
+<?php                                                                                                        
+
+while ($i = mysql_fetch_array($result))
+{ 
+        $myString .= "new google.maps.LatLng(".$i['poiLatidude'].",".$i['poiLongitude']."), ";
+}
+
+$myString = substr($myString, 0, strlen($myString)-1);
+echo $myString;
+
+?>	];
 	var myTrack = new google.maps.Polyline({
 	    path: myLatLng,
 	    strokeColor: "#FFFFFF",
