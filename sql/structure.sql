@@ -2,34 +2,35 @@ Drop Database if exists blauerHimmel;
 Create Database blauerHimmel;
 use blauerHimmel;
 
-CREATE TABLE tPoint 
+CREATE TABLE point 
 (
-	pk_tPoint_ID INT unsigned NOT NULL auto_increment,
-	poiLatidude FLOAT NOT NULL,
-	poiLongitude FLOAT NOT NULL,
-	poiSpeed FLOAT NOT NULL,
-	poiTimestampUTC TIMESTAMP NOT NULL DEFAULT '0000-00-00 00:00:00',
-	fk_pk_tReceiver_ID INT unsigned NOT NULL,
-	Primary Key (pk_tPoint_ID),
-	Index (pk_tPoint_ID)
+	id INT unsigned NOT NULL auto_increment,
+	latidude FLOAT NOT NULL,
+	longitude FLOAT NOT NULL,
+	speed FLOAT NOT NULL,
+	timestampUtc TIMESTAMP NOT NULL DEFAULT '0000-00-00 00:00:00',
+	receiver_id INT unsigned NOT NULL,
+	Primary Key (id),
+	Index (id)
 );
 
-CREATE TABLE tLog
+CREATE TABLE log
 (
-	pk_tLog_ID int unsigned NOT NULL auto_increment,
-	logAction VARCHAR(50) NOT NULL,
-	logPointCount INT unsigned NULL,
-	logIp VARCHAR(40) NOT NULL,
-	logTime TIMESTAMP NOT NULL DEFAULT now(),
-	fk_pk_tReceiver_ID INT unsigned NOT NULL,
-	Primary Key (pk_tLog_ID),
-	Index (pk_tLog_ID)
+	id int unsigned NOT NULL auto_increment,
+	action VARCHAR(50) NOT NULL,
+	pointCount INT unsigned NULL,
+	ip VARCHAR(40) NOT NULL,
+	time TIMESTAMP NOT NULL DEFAULT now(),
+	receiver_id INT unsigned NOT NULL,
+	Primary Key (id),
+	Index (id)
 );
 
-CREATE TABLE tReceiver
+CREATE TABLE receiver
 (
-	pk_tReceiver_ID int unsigned NOT NULL auto_increment,
-	recName VARCHAR(50) NOT NULL,
-	recApiKey VARCHAR(32) NOT NULL,
-	Primary Key (pk_tReceiver_ID)
+	id int unsigned NOT NULL auto_increment,
+	name VARCHAR(50) NOT NULL,
+	apiKey VARCHAR(32) NOT NULL,
+	Primary Key (id),
+	Index (id)
 );

@@ -28,9 +28,9 @@ if ($error != 0)
 
 
 	$result = mysql_query("
-	SELECT pk_tReceiver_ID FROM `tReceiver`
-	WHERE recName = '".$dataObj->name."' AND
-	recApiKey = '".$dataObj->apikey."'
+	SELECT `id` FROM `receiver`
+	WHERE `name` = '".$dataObj->name."' AND
+	`apiKey` = '".$dataObj->apikey."'
 	");
 	if ($result && mysql_num_rows($result) == 1)
 	$recID = mysql_result($result, 0);
@@ -47,7 +47,7 @@ if ($error != 0)
 	if($auth != 0)
 	{
 	
-     		$inputQuery = "INSERT INTO `tPoint` (`poiLatidude`, `poiLongitude`, `poiSpeed`, `poiTimestampUTC`, `fk_pk_tReceiver_ID`) VALUES";
+     		$inputQuery = "INSERT INTO `point` (`latidude`, `longitude`, `speed`, `timestampUtc`, `receiver_id`) VALUES";
 
 		foreach ($dataObj->point as $point)
 		{
@@ -125,7 +125,7 @@ function myLog($action, $count, $recID)
 	$ip = $_SERVER['REMOTE_ADDR'];
 
 	$query = "
-	INSERT INTO `tLog` (`logAction`, `logPointCount`, `logIp`, `fk_pk_tReceiver_ID`)
+	INSERT INTO `log` (`action`, `pointCount`, `ip`, `receiver_id`)
 	VALUES ('".$action."', ".$count.", '".$ip."', ".$recID.");";
 	mysql_query($query);
 
