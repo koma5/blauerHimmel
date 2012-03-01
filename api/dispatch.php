@@ -5,7 +5,7 @@ require_once 'lib/resources/point.php';
 
 
 $request = new Request(array(
-	'baseUri' => '/blauerHimmel/api/'
+	'baseUri' => '/blauerHimmel/api'
 ));
 $resource = $request->loadResource();
 $response = $resource->exec($request);
