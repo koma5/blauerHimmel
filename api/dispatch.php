@@ -1,7 +1,7 @@
 <?php
 require_once 'lib/peej-tonic/tonic.php';
-require_once 'lib/resources/point.php';
-require_once 'lib/resources/receiver.php';
+require_once 'lib/peej-tonic/resources/point.php';
+require_once 'lib/peej-tonic/resources/receiver.php';
 
 
 
