@@ -80,7 +80,7 @@ switch ($error) {
         echo '{"error":{"code":"1","name":"data saved ... everything OK"}}';
         break;
     case 0:
-    	myLog("no data", 0, 0);
+    	myLog("empty post", 0, 0);
         echo '{"error":{"code":"0","name":"no data received"}}';
         break;
     case 2:
