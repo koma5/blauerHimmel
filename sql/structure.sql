@@ -34,3 +34,23 @@ CREATE TABLE receiver
 	Primary Key (id),
 	Index (id)
 );
+
+# VIEWS
+
+DROP VIEW IF EXISTS vReceiver;
+CREATE VIEW vReceiver
+AS
+	SELECT * FROM receiver AS r
+	INNER JOIN
+		(
+			SELECT receiver_id, COUNT(*) AS pointCount
+			FROM point
+			GROUP BY receiver_id
+		) AS p ON p.receiver_id = r.id
+	INNER JOIN
+		(
+			SELECT receiver_id, MAX(time) AS lastUpdate
+			FROM log
+			WHERE action = 'post'
+			GROUP BY action, receiver_id
+		) AS l ON l.receiver_id = r.id;
