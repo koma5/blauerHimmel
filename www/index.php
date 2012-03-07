@@ -4,7 +4,7 @@ $myDB = new Database();
 $myDB->connect();
 
 $result = mysql_query("
-SELECT poiLatidude, poiLongitude, poiTimestampUTC FROM `tPoint` WHERE fk_pk_tReceiver_ID = 2
+SELECT Latidude, Longitude, timestampUtc FROM `Point` WHERE receiver_id = 2
 ");//echo mysql_errno($link) . ": " . mysql_error($link) . "\n";
 
 ?>
@@ -40,10 +40,10 @@ SELECT poiLatidude, poiLongitude, poiTimestampUTC FROM `tPoint` WHERE fk_pk_tRec
 	var myLatLng =
 	[
 <?php                                                                                                        
-
+$myString = NULL;
 while ($i = mysql_fetch_array($result))
 { 
-        $myString .= "new google.maps.LatLng(".$i['poiLatidude'].",".$i['poiLongitude']."), ";
+        $myString .= "new google.maps.LatLng(".$i['Latidude'].",".$i['Longitude']."), ";
 }
 
 $myString = substr($myString, 0, strlen($myString)-1);
