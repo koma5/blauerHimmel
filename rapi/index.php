@@ -80,11 +80,11 @@ switch ($error) {
         echo '{"error":{"code":"1","name":"data saved ... everything OK"}}';
         break;
     case 0:
-    	myLog("empty post", 0, 0);
+    	myLog("empty post");
         echo '{"error":{"code":"0","name":"no data received"}}';
         break;
     case 2:
-    	myLog("auth failed", 0, 0);
+    	myLog("auth failed");
         echo '{"error":{"code":"2","name":"authentication failed! go away!"}}';
         break;
     case 3:
@@ -120,7 +120,7 @@ function prepareJSON($input) {
     return $input;
 }
 
-function myLog($action, $count, $recID)
+function myLog($action, $count = 0, $recID = 0)
 {
 	$ip = $_SERVER['REMOTE_ADDR'];
 
