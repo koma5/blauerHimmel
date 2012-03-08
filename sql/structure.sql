@@ -45,6 +45,7 @@ CREATE TABLE receiver
 -- ---
 
 DROP VIEW IF EXISTS vReceiver;
+DROP VIEW IF EXISTS vPoint;
 
 -- ---
 -- View 'vReceiver'
@@ -61,8 +62,18 @@ SELECT 	r.*,
 	GROUP BY p.receiver_id;
 
 
-
-
+-- ---
+-- View 'vPoint'
+-- shows all points of receivers
+-- ---
+CREATE VIEW vPoint
+AS
+SELECT 	r.name,
+		p.*
+	FROM point AS p
+	INNER JOIN receiver AS r
+	ON p.receiver_id = r.id
+	ORDER BY p.timestampUtc ASC
 
 
 
