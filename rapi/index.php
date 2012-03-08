@@ -125,7 +125,7 @@ function myLog($action, $count, $recID)
 	$ip = $_SERVER['REMOTE_ADDR'];
 
 	$query = "
-	INSERT INTO `log` (`action`, `pointCount`, `ip`, `receiver_id`)
+	INSERT INTO `log` (`action`, `postedPoints`, `ip`, `receiver_id`)
 	VALUES ('".$action."', ".$count.", '".$ip."', ".$recID.");";
 	mysql_query($query);
 
