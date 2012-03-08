@@ -18,7 +18,7 @@ CREATE TABLE log
 (
 	id int unsigned NOT NULL auto_increment,
 	action VARCHAR(50) NOT NULL,
-	pointCount INT unsigned NULL,
+	postedPoints INT unsigned NULL,
 	ip VARCHAR(40) NOT NULL,
 	time TIMESTAMP NOT NULL DEFAULT now(),
 	receiver_id INT unsigned NOT NULL,
@@ -35,6 +35,11 @@ CREATE TABLE receiver
 	Index (id)
 );
 
+
+
+
+
+
 # VIEWS
 
 DROP VIEW IF EXISTS vReceiver;
@@ -47,6 +52,10 @@ AS
 			FROM point
 			GROUP BY receiver_id
 		) AS p ON p.receiver_id = r.id
+
+
+
+
 	INNER JOIN
 		(
 			SELECT receiver_id, MAX(time) AS lastUpdate
@@ -54,3 +63,33 @@ AS
 			WHERE action = 'post'
 			GROUP BY action, receiver_id
 		) AS l ON l.receiver_id = r.id;
+
+
+
+
+
+DROP VIEW IF EXISTS vReceiver;
+CREATE VIEW vReceiver
+AS
+SELECT 	receiver.name
+		COUNT(p.id) AS pointCount,
+		MAX(l.time) AS lastUpdate
+	FROM receiver AS r
+	INNER JOIN point AS p
+	ON p.receiver_id = r.id
+	INNER JOIN log AS l
+	ON l.receiver_id = r.id
+	GROUP BY p.receiver_id
+
+# failed auth logs  and no data won't have a receiver_id, so the logs with a receiver_id are an update
+
+
+
+
+
+
+
+
+
+
+
