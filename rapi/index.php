@@ -66,6 +66,7 @@ if ($error != 0)
      		$inputQuery = substr($inputQuery, 0, strlen($inputQuery)-1 ).";";
      		//#dev echo "query:".$inputQuery;
      		mysql_query($inputQuery);
+     		mysql_query("UPDATE  `receiver` SET  `lastUpdate` =  '".date("Y-m-d H:i:s", time())."' WHERE  `receiver`.`id` = ".$recID);
      		
 
 
