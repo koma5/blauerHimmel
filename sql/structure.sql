@@ -21,7 +21,7 @@ CREATE TABLE log
 	postedPoints INT unsigned NULL,
 	ip VARCHAR(40) NOT NULL,
 	time TIMESTAMP NOT NULL DEFAULT now(),
-	receiver_id INT unsigned NOT NULL,
+	receiver_id INT unsigned NULL,
 	Primary Key (id),
 	Index (id)
 );
