@@ -1,7 +1,8 @@
 //-------------------------------------------------------------------------------------------------------------------------------
-// File     :  GPStoSD.c
+// File     :  gpsv1_4.c
 // Name     :  Stefan Steiner (@stektograph) & Marco Koch (@koma5)
 // Date     :  07.02.2012
+// Version  :  1.4
 // Platform :  Arduino
 // Function :  Get Data from the GPS modul pmb-248 and save them to a SD-Card
 //-------------------------------------------------------------------------------------------------------------------------------
@@ -9,215 +10,426 @@
 //-------------------------------------------------------------------------------------------------------------------------------
 //Includes
 //-------------------------------------------------------------------------------------------------------------------------------
-#include <SoftwareSerial.h>
-#include <SD.h>
-#include <String.h>
-//#include <avr/pgmspace.h>
+#include <NewSoftSerial.h> //library for Serial connection
+#include <SD.h> //library for SD Card
 //-------------------------------------------------------------------------------------------------------------------------------
 
 //-------------------------------------------------------------------------------------------------------------------------------
-//Hardware Variables 
+//Defines
 //-------------------------------------------------------------------------------------------------------------------------------
-SoftwareSerial GPS = SoftwareSerial(2,3); //SoftwareSerial(RX,TX)
-const int chipSelect = 4;                 //
-const int StatusLED = 12;                 //
+#define pin_GPS_TX 3
+#define pin_GPS_RX 2
+
+#define pin_spi_cs 4
+#define pin_spi_ss 10
+
+#define array_NMEA 100
+#define array_Data 15
+
+#define GPRMC 0
+#define GPGGA 1
+
+#define server_name "drerscht"
+#define server_apikey "4cdqfTqhL4SswTTeA4sOL4SswTTeA4sO"
+
+//-------------------------------------------------------------------------------------------------------------------------------
+//Hardware definitions 
+//-------------------------------------------------------------------------------------------------------------------------------
+NewSoftSerial GPS(pin_GPS_RX,pin_GPS_TX); //SoftwareSerial(RX,TX) 
 //-------------------------------------------------------------------------------------------------------------------------------
 
 //-------------------------------------------------------------------------------------------------------------------------------
 //Flags
 //-------------------------------------------------------------------------------------------------------------------------------
-boolean GPSrd = true;    //is GPS receive data
-boolean NMEAstr = false;  //NMEA string received
-boolean usData = false;   //are usefull Datas available
+boolean GPSrecdata;    //is GPS receive data
+boolean usefullData;   //are usefull Datas available
 //-------------------------------------------------------------------------------------------------------------------------------
 //Global Variables
 //-------------------------------------------------------------------------------------------------------------------------------
-int NMEAlevel = 0; //showes active level of array, active means the one who will be filled now... works as FILO
-char NMEA[8][100]; //can save 8 NMEA sentence 
+char NMEA[array_NMEA]; //save NMEA sentence 
+int NMEAcharcount;     //count 
 
-int NMEAcharcount = 0; //count 
+//in char array -> we send string for calculating
+char GPRMC_time[array_Data];              //long  //
+char GPRMC_validity[array_Data];
+char GPRMC_latitude[array_Data];          //float //
+char GPRMC_northsouth[array_Data];
+char GPRMC_longitude[array_Data];         //float //
+char GPRMC_eastwest[array_Data];
+char GPRMC_speed[array_Data];             //float // in knot -> 1 knot = 1,852 km/h
+char GPRMC_direction[array_Data];
+char GPRMC_date[array_Data];             //int   // day, month, year
+char GPRMC_checksum[array_Data];
 
-
-                           //in string -> we send string for calculating
-	String time;              //long  //
-	String latitude;          //float //
-	String longitude;         //float //
-	String Speed;             //float // in knot -> 1 knot = 1,852 km/h
-	String  date;             //int   // day, month, year
-	String  altitude;         //int   // above sea level
+char GPGGA_altitude[array_Data];         //int   // above sea level
 
 //-------------------------------------------------------------------------------------------------------------------------------
 
 //-------------------------------------------------------------------------------------------------------------------------------
-//setup
+//setup & loop
 //-------------------------------------------------------------------------------------------------------------------------------
-void setup()
+void setup(){}        //program starts at Main
+void loop(){Main();}  //
+//-------------------------------------------------------------------------------------------------------------------------------
+//Main
+//-------------------------------------------------------------------------------------------------------------------------------
+void Main(void)
 {
+  initSerial(); //initialize serial interface
+  initVar();    //initialize every variables  
+  Serial.println(initSD());     //initialize SD Card
   
-  GPS.begin(4800); //serial data configuration for pmb-248, baudrate 4800
-  Serial.begin(9600); //serial data configuration for computer, baudrate: 9600
+  while(1)
+  {
+     if ((GPS.available()) && (GPSrecdata == true)) //GPS data are available and are allowed to receive
+     {
+        getGPSData(); //receive GPS data and parse them
+     }
   
-  pinMode(StatusLED, OUTPUT); //
+    if(usefullData == true) //usefull Data ready to save to SD
+    {
+  
+      Serial.println("----------------------------------");
+      Serial.print("time:");
+      Serial.println(GPRMC_time);
+            
+      Serial.print("validity:");
+      Serial.println(GPRMC_validity);
 
-  for(int y = 0; y<8;y++)                       //empty NMEA[][]
-     for(int x = 0; x<100;x++)                  //
-		 NMEA[y][x] = 'x';                      //
+      Serial.print("latitude:");
+      Serial.println(GPRMC_latitude);
 
+      Serial.print("northsouth:");
+      Serial.println(GPRMC_northsouth);
 
+      Serial.print("longitude:");
+      Serial.println(GPRMC_longitude);
+
+      Serial.print("eastwest:");
+      Serial.println(GPRMC_eastwest);
+
+      Serial.print("speed:");
+      Serial.println(GPRMC_speed);
+
+      Serial.print("direction:");
+      Serial.println(GPRMC_direction);
+
+      Serial.print("date:");
+      Serial.println(GPRMC_date);
+
+      Serial.print("checksum:");
+      Serial.println(GPRMC_checksum);
+      //Serial.println("----------------------------------");    
+   
+       writetoSD();
+       usefullData = false; //wait for next Data
+    }
+  }
+}
+
+//-------------------------------------------------------------------------------------------------------------------------------
+//Function     : int initSerial(void)
+//task         : initialize Serial Interface 
+//Parameter    : void
+//Return       : 0 : Error
+//               1 : Succesfull
+//-------------------------------------------------------------------------------------------------------------------------------
+int initSerial(void)
+{
+   GPS.begin(4800); //serial data configuration for pmb-248, baudrate 4800
+   Serial.begin(9600); //serial data configuration for computer, baudrate: 9600
+   return 1;
 }
 //-------------------------------------------------------------------------------------------------------------------------------
 
 //-------------------------------------------------------------------------------------------------------------------------------
-//loop
+//Function     : void initVar(void)
+//task         : initialize Variables
+//Parameter    : void
+//Return       : 0 : Error
+//               1 : Succesfull
 //-------------------------------------------------------------------------------------------------------------------------------
-void loop()
-{ 
-  if ((GPS.available()) && (GPSrd == true)) //GPS data are available and are allowed to receive
-  {
-		  getGPSData();
-                // for(int x = 0; x<8;x++)Serial.print(NMEA[x]);  
+int initVar(void)
+{
+   for(int x = 0; x<array_NMEA;x++) NMEA[x] = ' '; //empty NMEA
+   NMEAcharcount = 0;
+      
+   GPSrecdata = true;
+   usefullData = false;
 
-  }
+   return 1;
+}
 
-
-                 
-  if(NMEAstr == true) //NMEA String received -> Parse
-  {
-	  parseNMEA();
-	  NMEAstr == false;   //wait for next NMEA string
-  }
-  
-/*  if(usData == true) //usefull Data ready to save to SD
-  {
-          Serial.print(time);
-	  Serial.print(latitude);
-	  Serial.print(longitude);
-	  Serial.print(Speed);
-	  Serial.print(date);
-	  Serial.print(altitude); 
-          //save Data
-	  usData = false; //wait for next Data
-  }*/
+//-------------------------------------------------------------------------------------------------------------------------------
+//Function     : void initSD(void)
+//task         : initialize SD Card
+//Parameter    : void
+//Return       : 0 : Error
+//               1 : Succesfull
+//-------------------------------------------------------------------------------------------------------------------------------
+int initSD(void)
+{
+   pinMode(pin_spi_ss, OUTPUT);
+   
+   if(!SD.begin(pin_spi_cs))
+      return 0;  //Errorcase
+   
+  /* if(!SD.exists("archive"))
+   {
+     SD.mkdir("archive");
+   }
+   
+   if(!SD.exists("archive/descript.txt"))
+   {
+     File dataFile = SD.open("archive/descript.txt", FILE_WRITE);
+     dataFile.println("GPS logger, Marco Koch & Stefan Steiner");
+     dataFile.println("The archive dir includes all Data that were sent to the server");
+     dataFile.close();
+   }
+   
+   
+   writetoSD();/////to test!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+   
+   */
+   return 1;     //initializing was a success
 }
 //-------------------------------------------------------------------------------------------------------------------------------
 
 //-------------------------------------------------------------------------------------------------------------------------------
-//Function     : void getGPSData(void);
+//Function     : void getGPSData(void)
 //task         : get an NMEA string 
 //Parameter    : void
-//Return       : void
+//Return       : 0 : Error
+//               1 : Succesfull
 //-------------------------------------------------------------------------------------------------------------------------------
-void getGPSData()
+int getGPSData()
 {   
-	while(GPS.available()) //get all sended data not just one char
-	{
-        NMEA[NMEAlevel][NMEAcharcount] = GPS.read(); //Get one char
-        //Serial.print(NMEA[NMEAlevel][NMEAcharcount]);
-        
-        if (NMEA[NMEAlevel][NMEAcharcount] == '$') //if a dollarsign is received -> end of NMEA sentence
-        {
-           NMEA[NMEAlevel][NMEAcharcount] = '\0';  //replace dollarsign with end of string
-            
-           NMEAstr = true; //NMEAstr received set flag
- 
-           Serial.print(NMEAlevel);
-           Serial.print(NMEA[NMEAlevel]);
-		   if(NMEAlevel <7) //no Overflow
-			   NMEAlevel++; //change to next NMEA level. next string can be saved
-
-  
-          for(int x = 0; x<100;x++)NMEA[NMEAlevel][x] = ' '; //prepare for filling new NMEA sentence
-          
-          NMEA[NMEAlevel][0] = '$'; //new String beginns with $
-          NMEAcharcount = 0;            
-        }
-
-        NMEAcharcount++;                 
-	}
-	//NMEA[NMEAlevel][NMEAcharcount+1] = '\0'; //to avoid endless String
-
-}
-//-------------------------------------------------------------------------------------------------------------------------------
-
-//-------------------------------------------------------------------------------------------------------------------------------
-//Function     : void parseNMEA(void)
-//task         : parse an NMEA string and save data to a struct
-//Parameter    : void
-//Return       : void
-//-------------------------------------------------------------------------------------------------------------------------------
-void parseNMEA()
-{
-   Serial.print("Begin parse");
-   Serial.print(NMEAlevel);
-              Serial.print(NMEA[NMEAlevel]);
-
-   while(NMEAlevel >=0)//get last saved string and check every string in the NMEA array
+   while(GPS.available()) //get all sended data not just one char
    {
-	   String NMEAstring = NMEA[NMEAlevel];//copy string
-	   NMEAlevel--;
+      NMEA[NMEAcharcount] = GPS.read(); //Get one char
+        
+      if (NMEA[NMEAcharcount] == '$') //if a dollarsign is received -> end of NMEA sentence
+      {
+         NMEA[NMEAcharcount] = '\0';  //replace dollarsign with end of string
+         
+         Serial.println(NMEA);              
+         getDataNMEA();//get data from the String
+  
+         for(int x = 0; x<array_NMEA;x++)NMEA[x] = ' '; //prepare for filling new NMEA sentence
+          
+         NMEA[0] = '$'; //new String beginns with $
+         NMEAcharcount = 0;            
+      }
 
-	   if(NMEAstring.indexOf("$GPRMC") !=-1) 	//check string
-	   {
-		   if(getdatastr(NMEAstring, 2).equals("A"))//valid data
-		   {
-			/*  time = getdatastr(NMEAstring, 1);              
-			  latitude = getdatastr(NMEAstring, 3);          
-			  longitude = getdatastr(NMEAstring, 4);     
-			  Speed = getdatastr(NMEAstring, 5);            
-			  date = getdatastr(NMEAstring, 7);      
-*/
-                          usData = true;  //usefull data 
-                  }
-		  
-	   }
-
-       if(NMEAstring.indexOf("$GPGGA") != -1)
-	   {
-          //altitude = getdatastr(NMEAstring, 7);      
-		  usData = true; //usefull data found
-	   }
+         NMEAcharcount++;                 
    }
-   NMEAlevel = 0;
-   NMEAstr = false;
-      Serial.print("end parse");
-
+   
+   return 1;
 }
-
+//-------------------------------------------------------------------------------------------------------------------------------
 
 //-------------------------------------------------------------------------------------------------------------------------------
-//Function     : String getdatastr(String NMEAsente, int wdata)
-//task         : receive a string and which data want to find out and return this data in another string
-//Parameter    : StringNMEAsente : string which includes a NMEA sentence
-//               int wdata       :  which data you want to find out, begins with one (in $GPRMC string, that's the time)     
-//Return       : String          :  returns a string with the data
-//                                  or 0 in an errorcase
+//Function     : int getDataNMEA(void)
+//task         : get Datafrom an NMEA string and save these Data
+//Parameter    : void
+//Return       : 0 : Error
+//               1 : Succesfull
 //-------------------------------------------------------------------------------------------------------------------------------
-String getdatastr(String NMEAsente, int wdata)
+int getDataNMEA(void)
+{ 
+   if(kindNMEAsent(GPRMC)) 	//check if it's a $GPRMC nmeastring
+   {
+         getdatastr(GPRMC);              
+         //if(validdata)
+         usefullData = true;  //usefull data 
+      
+
+   }
+
+   if(kindNMEAsent(GPGGA))//check if it's a $GPGGA nmeastring
+   {
+
+      getdatastr(GPGGA);      
+   }
+   
+  return 1;
+}
+//-------------------------------------------------------------------------------------------------------------------------------
+
+//-------------------------------------------------------------------------------------------------------------------------------
+//Function     : int kindNMEAsent(int NMEAtype)
+//task         : search if specifice type of NMEA sentence is received
+//Parameter    : GPRMC
+//               GPGGA                 
+//Return       : 0 : Error
+//               1 : Succesfull
+//-------------------------------------------------------------------------------------------------------------------------------
+int kindNMEAsent(int NMEAtype)
+{ 
+  int wheredollar = -1; //place of dollar sign
+  
+  for(int x = 0; x<array_NMEA; x++) //check where's the dollar sign
+  {
+    if(NMEA[x] == '$')//found
+    {
+      if(wheredollar ==-1)wheredollar = x;//just one dollarsign in the string is allowed
+      else return 0;                      //
+    }
+  }
+  if(wheredollar == -1) return 0; //no dollar sign found
+  
+  if(NMEAtype == GPRMC)
+  {
+    if(NMEA[wheredollar+1] == 'G')
+    if(NMEA[wheredollar+2] == 'P')
+    if(NMEA[wheredollar+3] == 'R')
+    if(NMEA[wheredollar+4] == 'M')
+    if(NMEA[wheredollar+5] == 'C')    
+    return 1;
+  }
+  
+  if(NMEAtype == GPGGA)
+  {
+    if(NMEA[wheredollar+1] == 'G')
+    if(NMEA[wheredollar+2] == 'P')
+    if(NMEA[wheredollar+3] == 'G')
+    if(NMEA[wheredollar+4] == 'G')
+    if(NMEA[wheredollar+5] == 'A')    
+    return 1;
+  }
+  
+  return 0;  
+}
+//-------------------------------------------------------------------------------------------------------------------------------
+
+//-------------------------------------------------------------------------------------------------------------------------------
+//Function     :
+//task         : 
+//Parameter    :    
+//Return       : 0 : Error
+//               1 : Succesfull
+//-------------------------------------------------------------------------------------------------------------------------------
+
+int getdatastr(int NMEAtype)
 {
-	int startplace = 0;
-	int stopplace =0;
+  int startplace = 0; //startplace of copied part of String startplace is on a comma
+ 
+  if(nextcommaNMEA(0))
+     startplace = nextcommaNMEA(0);//index of first ','
+  else return 0;
+  
+  
+  //Serial.print("first comma");
+  //Serial.println(cursorNMEA);
+
+
+  if(NMEAtype == GPRMC)
+  {
+    partdata(startplace, GPRMC_time);
+    startplace = nextcommaNMEA(startplace);
     
-	startplace = NMEAsente.indexOf(',');//index of first ','
-	
-	if(startplace == -1) return 0; // errorcase no comma in the string
+    partdata(startplace, GPRMC_validity);
+    startplace = nextcommaNMEA(startplace);
 
-    while(wdata > 1) //find out first place of first string
-	{
-		startplace = NMEAsente.indexOf(',', startplace);
-		if(startplace== -1) return 0;
-	}
-	startplace +=1; //place on first data not at comma
+    partdata(startplace, GPRMC_latitude);
+    startplace = nextcommaNMEA(startplace);
 
-	stopplace = NMEAsente.indexOf(',', startplace); //end of data
-	
-	if(stopplace ==-1) //last data of NMEA sentence is searched
-	{
-		return NMEAsente.substring(startplace);
-	}
-	else
-	{
-		return NMEAsente.substring(startplace, stopplace);
-	}
+    partdata(startplace, GPRMC_northsouth);
+    startplace = nextcommaNMEA(startplace);
 
+    partdata(startplace, GPRMC_longitude);
+    startplace = nextcommaNMEA(startplace);
 
+    partdata(startplace, GPRMC_eastwest);
+    startplace = nextcommaNMEA(startplace);
+
+    partdata(startplace, GPRMC_speed);
+    startplace = nextcommaNMEA(startplace);
+
+    partdata(startplace, GPRMC_direction);
+    startplace = nextcommaNMEA(startplace);
+
+    partdata(startplace, GPRMC_date);
+    startplace = nextcommaNMEA(startplace);
+    startplace = nextcommaNMEA(startplace);
+    startplace = nextcommaNMEA(startplace);
+    
+    partdata(startplace, GPRMC_checksum);  
+  }
+  if(NMEAtype == GPGGA)
+  {
+  }
+  
 }
+//-------------------------------------------------------------------------------------------------------------------------------
+
+//-------------------------------------------------------------------------------------------------------------------------------
+//Function     : 
+//task         : 
+//Parameter    : 
+//Return       : 0 : Error
+//               1 : Success
+//-------------------------------------------------------------------------------------------------------------------------------
+int partdata(int startposition, char *result)
+{
+    int stopposition = 0;  //stopplace of copied part of String, stoppplace is on a comma or a end string termination sign
+    int count = 0;
+
+   if(nextcommaNMEA(startposition))
+   {
+     stopposition = nextcommaNMEA(startposition);
+     startposition++; //comma is not included in data
+     while(stopposition > startposition)
+     {
+       result[count] = NMEA[startposition];
+       count++;
+       startposition++;
+     }
+     return 1;
+   }
+   else return 0;//error
+  
+}
+//-------------------------------------------------------------------------------------------------------------------------------
+
+//-------------------------------------------------------------------------------------------------------------------------------
+//Function     : 
+//task         : 
+//Parameter    : 
+//Return       : 0 : Error
+//               int position; position of next comma in NMEA string
+//-------------------------------------------------------------------------------------------------------------------------------
+int nextcommaNMEA(int curserposition)
+{
+  curserposition++; //search next comma, not the actuall one 
+   while(NMEA[curserposition] != ',' && curserposition<array_NMEA && NMEA[curserposition] != '\n')curserposition++; //find next comma in sentence
+  if(curserposition >= array_NMEA-1) return 0;// errorcase no comma in the string
+  else return curserposition;
+     
+}
+//-------------------------------------------------------------------------------------------------------------------------------
+
+//-------------------------------------------------------------------------------------------------------------------------------
+//Function     : 
+//task         : 
+//Parameter    : 
+//Return       : 0 : Error
+//               int position; position of next comma in NMEA string
+//-------------------------------------------------------------------------------------------------------------------------------
+int writetoSD(void)
+{
+   if(!SD.exists("readytosend.txt"))
+   {
+     File dataFile = SD.open("readytosend.txt", FILE_WRITE);
+     dataFile.println("{");
+     dataFile.print("  \"name\":");
+     dataFile.print(server_name);
+     dataFile.print(",\naöslfdölasdjasfdj");
+	 
+	 //fileaufbau noch einfügen... no problem
+     dataFile.close();
+   }
+ 
+}
+//-------------------------------------------------------------------------------------------------------------------------------
+
