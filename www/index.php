@@ -26,41 +26,10 @@ SELECT Latidude, Longitude, timestampUtc FROM `Point` WHERE receiver_id = 2
   
   <script type="text/javascript" src = "http://maps.googleapis.com/maps/api/js?key=AIzaSyDZ2Idc-C45Q2_YEox0lfIpIA5Fv3kE0s8&sensor=false">
   </script>
-  <script type="text/javascript">
+  
+  <script type="text/javascript" src="main.js">
+  </script>
 
-     function initialize() {
-        var myOptions = {
-          center: new google.maps.LatLng(42.3717,10.92602),
-          zoom: 12,
-          mapTypeId: google.maps.MapTypeId.ROADMAP
-        };
-
-	var map = new google.maps.Map(document.getElementById("map_canvas"), myOptions);
-
-	var myLatLng =
-	[
-<?php                                                                                                        
-$myString = NULL;
-while ($i = mysql_fetch_array($result))
-{ 
-        $myString .= "new google.maps.LatLng(".$i['Latidude'].",".$i['Longitude']."), ";
-}
-
-$myString = substr($myString, 0, strlen($myString)-1);
-echo $myString;
-
-?>	];
-	var myTrack = new google.maps.Polyline({
-	    path: myLatLng,
-	    strokeColor: "#FFFFFF",
-	    strokeOpacity: .5,
-	    strokeWeight: 2
-	});
-
-	myTrack.setMap(map);
-
-      }
-   </script>
   </head>
 
   <body onload="initialize()">
