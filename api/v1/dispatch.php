@@ -11,7 +11,7 @@ $myDB = new Database();
 $myDB->connect();
 
 $request = new Request(array(
-	'baseUri' => '/blauerhimmel/api/v1'
+	'baseUri' => $_SERVER["REQUEST_URI"]
 ));
 
 try {
@@ -19,7 +19,7 @@ try {
 	$response = $resource->exec($request);
 	$response->output();
 }
-catch (Exception $e)
+catch (ResponseException $e)
 {
 	print $e->getMessage();
 }
