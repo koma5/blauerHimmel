@@ -5,6 +5,7 @@ require_once 'lib/db.class.php';
 $app = new Slim();
 
 $app->contentType('application/json');
+$app->response()->header('Access-Control-Allow-Origin', '*');
 
 $myDB = new Database();
 $myDB->connect();
@@ -19,31 +20,35 @@ $app->get('/', function () {
 	");
 
 	
-        if ($result && mysql_num_rows($result) > 0)
-        {
+	if ($result && mysql_num_rows($result) > 0)
+	{
 	
-	// building the response-json object
+		// building the response-json object
         $myReceiverArrayResponse = array();
 
-	while($row = mysql_fetch_array($result,MYSQL_ASSOC))		
-                {
+		while($row = mysql_fetch_array($result,MYSQL_ASSOC))		
+	    {
 			// building the single receiver object
-                	$myReceiverObject = (object) array (
-                	'receiver' => (object) array (
-                	        'name' => $row['name'],
-                	        'lastUpdate' => $row['lastUpdate'],
-                	        'pointCount' => (int)$row['pointCount']
-               	         	)
-                	);
+			$myReceiverObject = (object) array (
+			'receiver' => (object) array (
+			        'name' => $row['name'],
+			        'lastUpdate' => $row['lastUpdate'],
+			        'pointCount' => (int)$row['pointCount']
+			         	)
+			);
 
-                	array_push($myReceiverArrayResponse, $myReceiverObject);  
+			array_push($myReceiverArrayResponse, $myReceiverObject);  
 		}
+		//$response = new Slim_Http_Response();
+		//$response['Access-Control-Allow-Origin'] = '*';
+		//$response->write(json_encode($myReceiverArrayResponse));
 		print json_encode($myReceiverArrayResponse);
-        }
-        else
-        {
-                print "error... ;)";
-        }
+    }
+
+    else
+    {
+            print "error... ;)";
+    }
 
 
 
