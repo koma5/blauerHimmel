@@ -15,7 +15,7 @@ function setTrack(receiver)
 {
 
 
-	$.getJSON('http://172.16.0.96/blauerHimmel/api/v1.1/' + receiver + '/points', function(data){
+	$.getJSON(url + receiver + '/points', function(data){
 		console.log(data);
 
                 var myLatLng =[ ];
@@ -43,7 +43,7 @@ $(document).ready(function () {
 
 function setMenu()
 {
-       $.getJSON('http://172.16.0.96/blauerHimmel/api/v1.1/', function(data){
+       $.getJSON(url, function(data){
 
                 var items = [];
 
@@ -60,7 +60,7 @@ function setMenu()
 
 function main()
 {
-
+	url = 'http://172.16.0.96/blauerHimmel/api/v1/';
 	var map = initialize_gmap();
 	setMenu();
 	setTrack('concordia');
