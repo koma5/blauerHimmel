@@ -1,5 +1,3 @@
-
-
 function initialize_gmap() {
 	
 	var myOptions = {
@@ -8,14 +6,23 @@ function initialize_gmap() {
 		mapTypeId: google.maps.MapTypeId.ROADMAP
 	};
 
-	var map = new google.maps.Map(document.getElementById("map_canvas"), myOptions);
+	map = new google.maps.Map(document.getElementById("map_canvas"), myOptions);
 	
 	return map;
 }
 
-function setTrack()
+function setTrack(receiver)
 {
-                var myLatLng =[ new google.maps.LatLng(Latidude,Longitude)];
+
+
+	$.getJSON('http://172.16.0.96/blauerHimmel/api/v1.1/' + receiver + '/points', function(data){
+		console.log(data);
+
+                var myLatLng =[ ];
+
+	        jQuery.each(data.receiver.points, function(i, point){
+                        myLatLng.push( new google.maps.LatLng(point.lat, point.long) );
+                });		
 
                 var myTrack = new google.maps.Polyline({
                     path: myLatLng,
@@ -23,9 +30,9 @@ function setTrack()
                     strokeOpacity: .5,
                     strokeWeight: 2
                 });
-
-                myTrack.setMap(map);
-
+                
+		myTrack.setMap(map);
+	});
 
 }
 
@@ -34,26 +41,27 @@ $(document).ready(function () {
 	main()
 });
 
+function setMenu()
+{
+       $.getJSON('http://172.16.0.96/blauerHimmel/api/v1.1/', function(data){
+
+                var items = [];
+
+                jQuery.each(data, function(i, item){
+                        items.push('<li><a href="#">'+ item.receiver.name +'</a></li>');
+                });
+
+                //console.log(items.join(''));
+                $('#hover_menu > ul').append(items.join(''));
+
+        });
+}
+
 
 function main()
 {
 
 	var map = initialize_gmap();
-        
-	var receiverList = [];
-
-	$.getJSON('http://172.16.0.96/blauerHimmel/api/v1.1/', function(data){
-
-		var items = [];
-
-		jQuery.each(data, function(i, item){
-			items.push('<li><a href="#">'+ item.receiver.name +'</a></li>');
-		});
-
-		console.log(items.join(''));	
-		$('#hover_menu > ul').append(items.join(''));
-	
-	});
-	
-
+	setMenu();
+	setTrack('concordia');
 }
