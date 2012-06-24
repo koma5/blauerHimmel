@@ -48,7 +48,7 @@ function setMenu()
                 var items = [];
 
                 jQuery.each(data, function(i, item){
-                        items.push('<li><a href="#">'+ item.receiver.name +'</a></li>');
+                        items.push('<li onClick="setTrack(\''+item.receiver.name+'\')"><a href="#">'+ item.receiver.name +'</a></li>');
                 });
 
                 //console.log(items.join(''));
@@ -63,5 +63,5 @@ function main()
 	url = 'http://172.16.0.96/blauerHimmel/api/v1/';
 	var map = initialize_gmap();
 	setMenu();
-	setTrack('concordia');
+	//setTrack('concordia');
 }
