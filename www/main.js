@@ -60,7 +60,7 @@ function setMenu()
 
 function main()
 {
-	url = 'http://172.16.0.96/blauerHimmel/api/v1/';
+	url = 'http://api.blauerHimmel.5th.ch/v1/';
 	var map = initialize_gmap();
 	setMenu();
 	//setTrack('concordia');
