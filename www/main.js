@@ -24,14 +24,22 @@ function setTrack(receiver)
                         myLatLng.push( new google.maps.LatLng(point.lat, point.long) );
                 });		
 
-                var myTrack = new google.maps.Polyline({
-                    path: myLatLng,
-                    strokeColor: "#FFFFFF",
-                    strokeOpacity: .5,
-                    strokeWeight: 2
-                });
-                
-		myTrack.setMap(map);
+
+	        	if(typeof myTrack != 'undefined')
+	        	{
+	        		myTrack.setPath(myLatLng);
+	        	}
+
+	        	else
+	        	{
+					myTrack = new google.maps.Polyline({
+						path: myLatLng,
+						strokeColor: "#FFFFFF",
+						strokeOpacity: .5,
+						strokeWeight: 2
+					});
+					myTrack.setMap(map);
+	        	}
 	});
 
 }
@@ -61,7 +69,7 @@ function setMenu()
 function main()
 {
 	url = 'http://api.blauerHimmel.5th.ch/v1/';
-	var map = initialize_gmap();
+	initialize_gmap();
 	setMenu();
 	//setTrack('concordia');
 }
