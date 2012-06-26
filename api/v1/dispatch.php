@@ -24,20 +24,20 @@ $app->get('/', function () {
 	{
 	
 		// building the response-json object
-        $myReceiverArrayResponse = array();
+        $myReceiverArrayResponse = (object) array(
+        		'receiver' => array()
+       	);
 
 		while($row = mysql_fetch_array($result,MYSQL_ASSOC))		
 	    {
 			// building the single receiver object
-			$myReceiverObject = (object) array (
-			'receiver' => (object) array (
+			$myReceiverObject = array (
 			        'name' => $row['name'],
 			        'lastUpdate' => $row['lastUpdate'],
 			        'pointCount' => (int)$row['pointCount']
-			         	)
 			);
 
-			array_push($myReceiverArrayResponse, $myReceiverObject);  
+			array_push($myReceiverArrayResponse->receiver, $myReceiverObject);  
 		}
 		//$response = new Slim_Http_Response();
 		//$response['Access-Control-Allow-Origin'] = '*';

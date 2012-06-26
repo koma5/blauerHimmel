@@ -55,8 +55,8 @@ function setMenu()
 
                 var items = [];
 
-                jQuery.each(data, function(i, item){
-                        items.push('<li onClick="setTrack(\''+item.receiver.name+'\')"><a href="#">'+ item.receiver.name +'</a></li>');
+                jQuery.each(data.receiver, function(i, receiver){
+                        items.push('<li onClick="setTrack(\''+receiver.name+'\')"><a href="#">'+ receiver.name +'</a></li>');
                 });
 
                 //console.log(items.join(''));
