@@ -34,9 +34,9 @@ function setTrack(receiver)
     	{
 			myTrack = new google.maps.Polyline({
 				path: myLatLng,
-				strokeColor: "#FFFFFF",
+				strokeColor: "#3DB366",
 				strokeOpacity: .5,
-				strokeWeight: 2
+				strokeWeight: 3
 			});
 			myTrack.setMap(map);
     	}
@@ -76,7 +76,7 @@ function setMenu()
 
                         items.push('\
                         <li id="menu-' + receiver.name + '" onClick="setTrack(\''+receiver.name+'\')">\
-                        	<a href="#">'+ receiver.name +'</a>\
+                        	<a>'+ receiver.name + ' ' + receiver.pointCount + ' points</a>\
                         </li>');
 
                 });
