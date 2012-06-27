@@ -1,6 +1,0 @@
-# to do #
-
-* new more stable framework
-* error handling via Exeptions in dispatch.php
-* ressource for root with list of receivers
-* every receiver object
