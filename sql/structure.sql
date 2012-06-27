@@ -7,6 +7,7 @@ CREATE TABLE point
 	id INT unsigned NOT NULL auto_increment,
 	latidude FLOAT NOT NULL,
 	longitude FLOAT NOT NULL,
+	attitude FLOAT NOT NULL,
 	speed FLOAT NOT NULL,
 	timestampUtc TIMESTAMP NOT NULL DEFAULT '0000-00-00 00:00:00',
 	receiver_id INT unsigned NOT NULL,

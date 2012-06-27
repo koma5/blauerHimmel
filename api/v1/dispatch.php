@@ -97,7 +97,7 @@ $app->get('/:receiver', function($receiver) {
 $app->get('/:receiver/points', function($receiver) {
 
 	$result = mysql_query("
-		SELECT name, latidude, longitude, speed, timestampUtc
+		SELECT name, latidude, longitude, attitude, speed, timestampUtc
 		FROM `vPoint`
 		WHERE name = '".$receiver."'
 	"); $row = NULL;
@@ -117,8 +117,9 @@ $app->get('/:receiver/points', function($receiver) {
 			$myPoint = (object) array(
 				'lat' => (float)$row[1],
 				'long' => (float)$row[2],
-				'speed' => (int)$row[3],
-				'date' => $row[4]
+				'att' => (float)$row[3],
+				'speed' => (float)$row[4],
+				'date' => $row[5]
 			);
 
 			array_push($myReceiverPointsResponse->receiver->points, $myPoint);
