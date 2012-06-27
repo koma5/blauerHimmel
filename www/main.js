@@ -18,29 +18,46 @@ function setTrack(receiver)
 	$.getJSON(url + receiver + '/points', function(data){
 		console.log(data);
 
-                var myLatLng =[ ];
+        var myLatLng =[ ];
 
-	        jQuery.each(data.receiver.points, function(i, point){
-                        myLatLng.push( new google.maps.LatLng(point.lat, point.long) );
-                });		
+        jQuery.each(data.receiver.points, function(i, point){
+            myLatLng.push( new google.maps.LatLng(point.lat, point.long) );
+        });		
 
 
-	        	if(typeof myTrack != 'undefined')
-	        	{
-	        		myTrack.setPath(myLatLng);
-	        	}
+    	if(typeof myTrack != 'undefined')
+    	{
+    		myTrack.setPath(myLatLng);
+    	}
 
-	        	else
-	        	{
-					myTrack = new google.maps.Polyline({
-						path: myLatLng,
-						strokeColor: "#FFFFFF",
-						strokeOpacity: .5,
-						strokeWeight: 2
-					});
-					myTrack.setMap(map);
-	        	}
+    	else
+    	{
+			myTrack = new google.maps.Polyline({
+				path: myLatLng,
+				strokeColor: "#FFFFFF",
+				strokeOpacity: .5,
+				strokeWeight: 2
+			});
+			myTrack.setMap(map);
+    	}
+
+		//set active class on menu item
+		$('#hover_menu > ul > li').each( function(li){
+			
+			if ( $(this).attr('id') != 'menu-' + data.receiver.name )
+			{
+
+				$(this).removeClass('menu-active');
+			}
+			else
+			{
+				$(this).addClass('menu-active');
+			}
+		});
+
 	});
+
+
 
 }
 
@@ -56,10 +73,14 @@ function setMenu()
                 var items = [];
 
                 jQuery.each(data.receiver, function(i, receiver){
-                        items.push('<li onClick="setTrack(\''+receiver.name+'\')"><a href="#">'+ receiver.name +'</a></li>');
+
+                        items.push('\
+                        <li id="menu-' + receiver.name + '" onClick="setTrack(\''+receiver.name+'\')">\
+                        	<a href="#">'+ receiver.name +'</a>\
+                        </li>');
+
                 });
 
-                //console.log(items.join(''));
                 $('#hover_menu > ul').append(items.join(''));
 
         });
