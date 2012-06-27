@@ -5,49 +5,56 @@ body { font-family:sans-serif; height: 100%; margin: 0; padding: 0 }
 
 #hover_menu
 {
-	position: absolute;
-	width:300px;
-	right:25px;
-	bottom:50px;
-	background-color:black;
+        position: absolute;
+        width:300px;
+        right:25px;
+        bottom:50px;
+        background-color:black;
 
-	/*background-color:#669199; */
-                  -moz-box-shadow:    0 4px 20px 1px #000;
-                  -webkit-box-shadow: 0 4px 20px 1px #000;
-                  box-shadow:         0 4px 20px 1px #000;
-                
+        font-size:25px;
 
-                -ms-filter:"progid:DXImageTransform.Microsoft.Alpha(Opacity=60)";
-                filter: alpha(opacity=60);
-                -moz-opacity:0.6;
-                -khtml-opacity: 0.6;
-                opacity: 0.6;
-
-                -moz-border-radius: 10px;
-                -webkit-border-radius: 10px;
-                -khtml-border-radius: 10px;
-                border-radius: 10px;
-
-                border-style:solid;
-                border-width:2px;
-        }
-
-	#hover_menu ul li a, #hover_menu ul li a:visited
-	{
-		text-decoration:none;
-		color: white;
-	}
+        /*background-color:#669199; */
+        -moz-box-shadow:    0 4px 20px 1px #000;
+        -webkit-box-shadow: 0 4px 20px 1px #000;
+        box-shadow:         0 4px 20px 1px #000;
 
 
-	#hover_menu ul li a:active, #hover_menu ul li a:hover
-        {
-                text-decoration:underline;
-                color: white;
-        }
+        -ms-filter:"progid:DXImageTransform.Microsoft.Alpha(Opacity=60)";
+        filter: alpha(opacity=60);
+        -moz-opacity:0.6;
+        -khtml-opacity: 0.6;
+        opacity: 0.6;
 
-        #hover_menu ul li
-        {
-                list-style-type:none;
-                height:25px;
-                size:4em;
-        }
+        -moz-border-radius: 10px;
+        -webkit-border-radius: 10px;
+        -khtml-border-radius: 10px;
+        border-radius: 10px;
+
+        border-style:solid;
+        border-width:2px;
+}
+
+#hover_menu ul li a, #hover_menu ul li a:visited
+{
+	text-decoration:none;
+	color: white;
+}
+
+
+#hover_menu ul li a:active, #hover_menu ul li a:hover
+{
+        text-decoration:none;
+        color: gray;
+}
+
+#hover_menu ul li
+{
+        list-style-type:none;
+        height:25px;
+        size:4em;
+}
+
+.menu-active
+{
+        font-weight:bold;
+}
