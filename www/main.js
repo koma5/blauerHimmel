@@ -41,6 +41,10 @@ function setTrack(receiver)
 			myTrack.setMap(map);
     	}
 
+		map.setCenter(
+			new google.maps.LatLng(data.receiver.points[0].lat, data.receiver.points[0].long)
+		);
+
 		//set active class on menu item
 		$('#hover_menu > ul > li').each( function(li){
 			
