@@ -3,7 +3,7 @@
   <head>
   
   <meta charset="utf-8">
-  <title>blauerhimmel.</title>
+  <title>blauerhimmel.5th.ch</title>
   <meta name="viewport" content="initial-scale=1.0, user-scalable=no" />
   <link rel="stylesheet" type="text/css" href="style.css">
   <script src="http://code.jquery.com/jquery-latest.js"></script>
@@ -11,8 +11,7 @@
   <script type="text/javascript" src = "http://maps.googleapis.com/maps/api/js?key=AIzaSyDZ2Idc-C45Q2_YEox0lfIpIA5Fv3kE0s8&sensor=false">
   </script>
   
-  <script type="text/javascript" src="main.js">
-  </script>
+  <script type="text/javascript" src="main.js"></script>
 
   </head>
 
