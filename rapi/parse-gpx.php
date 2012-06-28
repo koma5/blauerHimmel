@@ -1,6 +1,5 @@
-
 <?php
-
+header('Content-type: application/json');
 
 $response = (object) array(
 	'name' => 'toeffli',
@@ -9,7 +8,6 @@ $response = (object) array(
 );
 
 $xml = simplexml_load_file('2012-06-27-siebnen-vorderthal.gpx');
-echo $xml->getName() . "<br/>";
 
 $points = $xml->trk->trkseg->trkpt;
 
