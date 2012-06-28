@@ -47,7 +47,7 @@ if ($error != 0)
 	if($auth != 0)
 	{
 	
-     		$inputQuery = "INSERT INTO `point` (`latidude`, `longitude`, `speed`, `timestampUtc`, `receiver_id`) VALUES";
+     		$inputQuery = "INSERT INTO `point` (`latidude`, `longitude`, `attitude`, `speed`, `timestampUtc`, `receiver_id`) VALUES";
 
 		foreach ($dataObj->point as $point)
 		{
@@ -55,6 +55,7 @@ if ($error != 0)
 			$inputQuery .= " (
 			'".$point->lat."',
 			'".$point->long."',
+			'".$point->att."',
 			'".$point->speed."',
 			'".$point->date."',
 			'".$recID."'
