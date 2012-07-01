@@ -16,23 +16,41 @@
  http://www.arduino.cc/en/Tutorial/SerialEvent
  
  */
+#include "TinyGPS.h"
+TinyGPS gpsParser;
 
-String inputString = "";         // a string to hold incoming data
+long lat, lon;
+unsigned long fix_age, time, date;
+unsigned long chars;
+unsigned short sentences, failed_checksum;
+
 boolean stringComplete = false;  // whether the string is complete
 
 void setup() {
   // initialize serial:
   Serial.begin(9600);
-  // reserve 200 bytes for the inputString:
-  inputString.reserve(200);
 }
 
 void loop() {
   // print the string when a newline arrives:
   if (stringComplete) {
-    Serial.print(inputString); 
-    // clear the string:
-    inputString = "";
+    gpsParser.get_position(&lat, &lon, &fix_age);
+    gpsParser.stats(&chars, &sentences, &failed_checksum);
+    gpsParser.get_datetime(&date, &time, &fix_age);
+    Serial.print("lat: ");
+    Serial.println(lat);
+    Serial.print("lon: ");
+    Serial.println(lon);
+    Serial.print("date: ");
+    Serial.println(date);
+    Serial.print("time: ");
+    Serial.println(time);
+    Serial.print("chars: ");
+    Serial.print(chars);
+    Serial.print(" sentences: ");
+    Serial.print(sentences);
+    Serial.print(" failed_checksum: ");
+    Serial.println(failed_checksum);
     stringComplete = false;
   }
 }
@@ -48,10 +66,9 @@ void serialEvent() {
     // get the new byte:
     char inChar = (char)Serial.read(); 
     // add it to the inputString:
-    inputString += inChar;
     // if the incoming character is a newline, set a flag
     // so the main loop can do something about it:
-    if (inChar == '\n') {
+    if (gpsParser.encode(inChar)) {
       stringComplete = true;
     } 
   }
